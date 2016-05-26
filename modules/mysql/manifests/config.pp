@@ -17,4 +17,11 @@ class mysql::config {
 		require => Class["mysql::install"],
 		notify => Class["mysql::service"],
 	}
+	
+	cron { 'mysqlBackUp':
+		command => 'mysqldump --all-databases --add-drop-table > /home/bacula/db-backup.sql',
+		user => root,
+		hour => 1,
+		minute => 20
+	}		
 }
