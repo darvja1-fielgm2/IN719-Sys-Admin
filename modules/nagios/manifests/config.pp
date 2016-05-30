@@ -98,7 +98,7 @@ class nagios::config {
 	nagios_host { 'ad.micro-agents.net':
 		target => '/etc/nagios3/conf.d/ppt_hosts.cfg',
 		alias => 'ad',
-		address => '10.25.1.87',
+		address => '10.25.100.2',
 		check_period => '24x7',
 		max_check_attempts => 3,
 		check_command => 'check-host-alive',
@@ -137,8 +137,23 @@ class nagios::config {
 	notification_period => '24x7',
 	notification_options => 'w,u,c',
 	contact_groups => 'sysadmins',
-}
+	}
 
+	nagios_service {'ssh':
+		service_description => 'SSH',
+		hostgroup_name => 'ssh_servers_check',
+		target => '/etc/nagios3/conf.d/ppt_ssh_service.cfg',
+		check_command => 'check_ssh',
+		max_check_attempts => 3,
+		retry_check_interval => 1,
+		normal_check_interval => 5,
+		check_period => '24x7',
+		notification_interval => 30,
+		notification_period => '24x7',
+		notification_options => 'w,u,c',
+		contact_groups => 'sysadmins',
+	}	
+	
 #define host group to identify mysql servers to nagios
 	nagios_hostgroup{'db-servers':
 		target => '/etc/nagios3/conf.d/ppt_hostgroups.cfg',
@@ -150,4 +165,9 @@ class nagios::config {
 		alias => 'Remote Disks',
 		members => 'db.micro-agents.net, storage.micro-agents.net, app.micro-agents.net',
 	}
+	nagios_hostgroup{'ssh_servers_check':
+		target => '/etc/nagios3/conf.d/ppt_hostgroups.cfg',
+		alias => 'SSH Servers',
+		members => 'db.micro-agents.net, storage.micro-agents.net, app.micro-agents.net, localhost',
+	} 	
 }
